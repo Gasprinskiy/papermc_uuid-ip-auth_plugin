@@ -1,0 +1,3 @@
+main: ${PACKAGE}.${NAME}
+name: ${NAME}
+api-version: "1.21.4"
