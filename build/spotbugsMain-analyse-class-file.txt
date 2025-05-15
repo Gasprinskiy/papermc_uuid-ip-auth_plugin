@@ -1,3 +1,0 @@
-/home/gasprinskiy/code/plugin-template/build/classes/java/main/com/crimsonwarpedcraft/uuidipauth/PlayerEntry.class
-/home/gasprinskiy/code/plugin-template/build/classes/java/main/com/crimsonwarpedcraft/uuidipauth/UuidIPAuth.class
-/home/gasprinskiy/code/plugin-template/build/classes/java/main/com/crimsonwarpedcraft/uuidipauth/UuidIPAuth$1.class
