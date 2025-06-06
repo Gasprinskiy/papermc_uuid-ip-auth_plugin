@@ -7,10 +7,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import org.bukkit.Location;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -23,6 +25,24 @@ import org.bukkit.event.Listener;
 
 public class UuidIPAuth extends JavaPlugin implements Listener {
   private List<PlayerEntry> players;
+
+  private SpawnCoords getSpawnCoords() {
+    File file = new File(Bukkit.getServer().getWorldContainer(), "spawn_coords.json");
+
+    if (!file.exists()) {
+      getLogger().warning("spawn_coords.json not found!");
+      return null;
+    }
+
+    try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+      Gson gson = new Gson();
+
+      return gson.fromJson(reader, SpawnCoords.class);
+    } catch (Exception e) {
+      getLogger().severe("could not parse coords: " + e.getMessage());
+      return null;
+    }
+  }
 
   private void loadPlayers() {
     File file = new File(Bukkit.getServer().getWorldContainer(), "players.json");
@@ -76,6 +96,21 @@ public class UuidIPAuth extends JavaPlugin implements Listener {
       return;
     }
 
-    getLogger().info("Player" + foundPlayer.username + "connected");
+    if (!player.hasPlayedBefore()) {
+      Location spawnLocation;
+
+      World world = Bukkit.getWorld("world");
+
+      SpawnCoords confirCoords = getSpawnCoords();
+      if (confirCoords != null) {
+        spawnLocation = new Location(world, confirCoords.getX(), confirCoords.getY(), confirCoords.getZ());
+      } else {
+        spawnLocation = world.getSpawnLocation();
+      }
+
+      player.teleport(spawnLocation);
+    }
+
+    getLogger().info("Player" + foundPlayer.name + "connected");
   }
 }
